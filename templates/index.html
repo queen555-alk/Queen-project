@@ -4,58 +4,116 @@
     <title>My Expense Tracker</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef1f5;
             padding: 30px;
+            max-width: 800px;
+            margin: auto;
         }
         h1 {
-            color: #333;
+            color: #2c3e50;
         }
-        .summary {
+        .summary, .insight {
             background-color: white;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .insight {
+            border-left: 4px solid #4a90e2;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
         }
-        th, td {
-            padding: 10px;
+        th {
+            background-color: #4a90e2;
+            color: white;
+            padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
         }
         img {
-            max-width: 600px;
+            max-width: 100%;
             margin-top: 20px;
+            border-radius: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        .badge {
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
         }
     </style>
 </head>
 <body>
-    <h1>My Expense Tracker</h1>
+    <h1>💰 My Expense Tracker</h1>
 
     <div class="summary">
-        <h2>Total Spent: ₦{{ total_spent }}</h2>
+        <h2 style="margin-top:0;">Total Spent: ₦{{ total_spent }}</h2>
+    </div>
+
+    <div class="insight">
+        <p><strong>Key insight:</strong> My biggest spending category is <strong>{{ top_category }}</strong>, and I tend to spend the most on <strong>{{ top_day }}</strong>s.</p>
     </div>
 
     <h2>Spending by Category</h2>
     <table>
-        <tr>
-            <th>Category</th>
-            <th>Amount</th>
-        </tr>
+        <tr><th>Category</th><th>Amount</th></tr>
         {% for category, amount in category_totals.items() %}
+        <tr><td>{{ category }}</td><td>₦{{ amount }}</td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>Spending by Day of Week</h2>
+    <table>
+        <tr><th>Day</th><th>Amount</th></tr>
+        {% for day, amount in day_totals.items() %}
+        <tr><td>{{ day }}</td><td>₦{{ amount }}</td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>All Transactions</h2>
+    <table>
+        <tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Level</th></tr>
+        {% for t in transactions %}
         <tr>
-            <td>{{ category }}</td>
-            <td>₦{{ amount }}</td>
+            <td>{{ t.date.strftime('%b %d') }}</td>
+            <td>{{ t.category }}</td>
+            <td>{{ t.description }}</td>
+            <td>₦{{ t.amount }}</td>
+            <td>
+                {% if t.spending_level == 'High' %}
+                    <span class="badge" style="background-color: #e74c3c;">High</span>
+                {% elif t.spending_level == 'Medium' %}
+                    <span class="badge" style="background-color: #f39c12;">Medium</span>
+                {% else %}
+                    <span class="badge" style="background-color: #27ae60;">Low</span>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
 
-    <h2>Chart</h2>
+    <h2>Category Breakdown Chart</h2>
     <img src="{{ url_for('static', filename='spending_by_category.png') }}" alt="Spending Chart">
+
+    <div class="insight" style="margin-top: 30px; border-left-color: #95a5a6;">
+        <p style="margin: 0; color: #555;"><strong>About this project:</strong> This dashboard analyzes my real personal spending using Python (pandas), classifies transactions by spending level, and visualizes the results through a Flask web app.</p>
+    </div>
 
 </body>
 </html>

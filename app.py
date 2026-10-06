@@ -12,8 +12,22 @@ def home():
 
     total_spent = df['amount'].sum()
     category_totals = df.groupby('category')['amount'].sum().sort_values(ascending=False)
+    day_totals = df.groupby('day_of_week')['amount'].sum().sort_values(ascending=False)
 
-    # Save chart into the static folder, so the webpage can display it
+    top_category = category_totals.index[0]
+    top_day = day_totals.index[0]
+
+    def classify(amount):
+        if amount >= 3000:
+            return "High"
+        elif amount >= 1500:
+            return "Medium"
+        else:
+            return "Low"
+
+    df['spending_level'] = df['amount'].apply(classify)
+    transactions = df[['date', 'category', 'description', 'amount', 'spending_level']].to_dict('records')
+
     plt.figure(figsize=(8, 5))
     plt.bar(category_totals.index, category_totals.values, color='skyblue')
     plt.title('My Spending by Category')
@@ -26,7 +40,11 @@ def home():
     return render_template(
         'index.html',
         total_spent=total_spent,
-        category_totals=category_totals.to_dict()
+        category_totals=category_totals.to_dict(),
+        day_totals=day_totals.to_dict(),
+        top_category=top_category,
+        top_day=top_day,
+        transactions=transactions
     )
 
 if __name__ == '__main__':
