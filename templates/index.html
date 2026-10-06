@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+        }
+        .summary {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        img {
+            max-width: 600px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Expense Tracker</h1>
+
+    <div class="summary">
+        <h2>Total Spent: ₦{{ total_spent }}</h2>
+    </div>
+
+    <h2>Spending by Category</h2>
+    <table>
+        <tr>
+            <th>Category</th>
+            <th>Amount</th>
+        </tr>
+        {% for category, amount in category_totals.items() %}
+        <tr>
+            <td>{{ category }}</td>
+            <td>₦{{ amount }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Chart</h2>
+    <img src="{{ url_for('static', filename='spending_by_category.png') }}" alt="Spending Chart">
+
+</body>
+</html>
